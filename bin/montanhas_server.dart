@@ -29,7 +29,7 @@ void main(List<String> args) async {
     exitCode = 64;
     return;
   }
-  db = Database("bin\\src\\server\\db.json");
+  db = Database("bin/src/server/db.json");
   auth = AuthService(key: "ghasjdklgfsdgkljWEDFSD", exp: 3600);
   db.init();
 
