@@ -13,8 +13,8 @@ class AuthService {
     this.scape,
   });
 
-  String generateToken(int id) {
-    final claimSet = JwtClaim(subject: '$id', issuer: 'dartio', maxAge: Duration(seconds: exp));
+  String generateToken(String id) {
+    final claimSet = JwtClaim(subject: id, issuer: 'dartio', maxAge: Duration(seconds: exp));
 
     return issueJwtHS256(claimSet, key);
   }

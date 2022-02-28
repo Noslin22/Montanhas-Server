@@ -105,7 +105,7 @@ Future<shelf.Response> handleAuth(shelf.Request request) async {
     return shelf.Response.ok(
       jsonEncode({
         'user': newUser,
-        'token': auth.generateToken(user['id']),
+        'token': auth.generateToken(user['id'].toString()),
         'exp': auth.exp
       }),
       headers: {'content-type': 'application/json'},
@@ -139,7 +139,8 @@ bool middlewareJwt(shelf.Request request) {
 
 Future<dynamic> getSegment(shelf.Request request) async {
   if (request.url.pathSegments.length > 1) {
-    return db.get(request.url.pathSegments.first, request.url.pathSegments[1].toString());
+    return db.get(
+        request.url.pathSegments.first, request.url.pathSegments[1].toString());
   } else {
     return db.getAll(request.url.pathSegments[0]);
   }
@@ -165,13 +166,10 @@ Future<shelf.Response> handleGet(shelf.Request request) async {
 }
 
 Future<shelf.Response> handlePost(shelf.Request request) async {
-  if (!middlewareJwt(request)) {
-    return shelf.Response.forbidden(jsonEncode({'error': 'middlewareJwt'}));
-  }
-  try {
+  final key = request.url.pathSegments[0];
+  post() async {
     var content = await request.readAsString();
     var data = jsonDecode(content) as Map;
-    final key = request.url.pathSegments[0];
     List<dynamic> seg = await db.getAll(request.url.pathSegments[0]);
 
     if (seg.isEmpty) {
@@ -183,8 +181,25 @@ Future<shelf.Response> handlePost(shelf.Request request) async {
       return shelf.Response.ok(jsonEncode(data),
           headers: {'content-type': 'application/json'});
     }
-  } catch (e) {
-    return shelf.Response.notFound(jsonEncode({'error': 'Internal Error. $e'}));
+  }
+
+  if (request.headers[HttpHeaders.authorizationHeader] != null) {
+    if (!middlewareJwt(request)) {
+      return shelf.Response.forbidden(jsonEncode({'error': 'Invalid Token'}));
+    } else {
+      return post();
+    }
+  } else {
+    if (key == "users") {
+      try {
+        return post();
+      } catch (e) {
+        return shelf.Response.notFound(
+            jsonEncode({'error': 'Internal Error. $e'}));
+      }
+    } else {
+      return shelf.Response.forbidden(jsonEncode({'error': 'Not logged'}));
+    }
   }
 }
 
@@ -227,9 +242,10 @@ Future<shelf.Response> handlePut(shelf.Request request) async {
     if (seg == null) {
       return shelf.Response.notFound(jsonEncode({'error': 'Not found'}));
     } else {
-      data['id'] = int.tryParse(request.url.pathSegments[1]) ?? request.url.pathSegments[1];
-      var position = (seg as List).indexWhere(
-          (element) => element['id'] == data["id"]);
+      data['id'] = int.tryParse(request.url.pathSegments[1]) ??
+          request.url.pathSegments[1];
+      var position =
+          (seg as List).indexWhere((element) => element['id'] == data["id"]);
 
       data.forEach((key, value) {
         seg[position][key] = value;
