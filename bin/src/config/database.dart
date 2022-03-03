@@ -6,6 +6,7 @@ abstract class IDatabase {
   Future save(String key, dynamic seg);
   Future<List> getAll(String query);
   Future<Map<String, dynamic>> get(String query, String id);
+  Future<dynamic> getProprety(String query, String id, String proprety);
 }
 
 class Database implements IDatabase {
@@ -36,6 +37,12 @@ class Database implements IDatabase {
   Future<Map<String, dynamic>> get(String query, String id) async {
     var db = await getAll(query);
     return db.firstWhere((element) => element['id'].toString() == id);
+  }
+  
+  @override
+  Future<dynamic> getProprety(String query, String id, String proprety) async {
+    var db = await getAll(query);
+    return db.firstWhere((element) => element['id'].toString() == id)[proprety];
   }
 
   @override

@@ -89,7 +89,6 @@ Future<shelf.Response> handleAuth(shelf.Request request) async {
         String.fromCharCodes(base64Decode(token.replaceFirst('Basic ', '')))
             .split(':');
     var users = await db.getAll('users');
-    print(users);
     Map user = users.firstWhere((element) =>
         element['email'] == credentials[0] &&
         element['password'] == credentials[1]);
@@ -138,11 +137,17 @@ bool middlewareJwt(shelf.Request request) {
 }
 
 Future<dynamic> getSegment(shelf.Request request) async {
-  if (request.url.pathSegments.length > 1) {
-    return db.get(
-        request.url.pathSegments.first, request.url.pathSegments[1].toString());
+  List segments = request.url.pathSegments;
+  if (segments.length == 2) {
+    return db.get(segments.first, segments[1].toString());
+  } else if (segments.length == 1) {
+    return db.getAll(segments[0]);
   } else {
-    return db.getAll(request.url.pathSegments[0]);
+    return db.getProprety(
+      segments.first,
+      segments[1].toString(),
+      segments[2].toString(),
+    );
   }
 }
 
@@ -165,12 +170,14 @@ Future<shelf.Response> handleGet(shelf.Request request) async {
   }
 }
 
-Future<shelf.Response> handlePost(shelf.Request request) async {
-  final key = request.url.pathSegments[0];
-  post() async {
+Future<shelf.Response> handleSegment(shelf.Request request) async {
+  List segments = request.url.pathSegments;
+
+  final key = segments[0];
+  if (segments.length == 1) {
     var content = await request.readAsString();
     var data = jsonDecode(content) as Map;
-    List<dynamic> seg = await db.getAll(request.url.pathSegments[0]);
+    List<dynamic> seg = await db.getAll(segments[0]);
 
     if (seg.isEmpty) {
       return shelf.Response.notFound(jsonEncode({'error': 'Not found'}));
@@ -181,18 +188,48 @@ Future<shelf.Response> handlePost(shelf.Request request) async {
       return shelf.Response.ok(jsonEncode(data),
           headers: {'content-type': 'application/json'});
     }
+  } else if (segments.length == 3) {
+    var content = await request.readAsString();
+    var data = jsonDecode(content) as Map;
+    List<dynamic> seg = await db.getAll(segments[0]);
+    Map prop = seg.firstWhere(
+      (element) => element["id"].toString() == segments[1],
+    ) as Map;
+
+    if (seg.isEmpty) {
+      return shelf.Response.notFound(jsonEncode({'error': 'Not found'}));
+    } else {
+      data['id'] = Uuid().v1();
+      prop.containsKey(segments[2]) ?
+      prop[segments[2]].add(data) : prop[segments[2]] = [data];
+      var position = seg.indexWhere((element) => element['id'] == prop["id"]);
+
+      prop.forEach((key, value) {
+        seg[position][key] = value;
+      });
+      await db.save(key, seg);
+      return shelf.Response.ok(jsonEncode(prop),
+          headers: {'content-type': 'application/json'});
+    }
+  } else {
+    return shelf.Response.notFound(
+        jsonEncode({'error': 'Provide a collection'}));
   }
+}
+
+Future<shelf.Response> handlePost(shelf.Request request) async {
+  final key = request.url.pathSegments[0];
 
   if (request.headers[HttpHeaders.authorizationHeader] != null) {
     if (!middlewareJwt(request)) {
       return shelf.Response.forbidden(jsonEncode({'error': 'Invalid Token'}));
     } else {
-      return post();
+      return handleSegment(request);
     }
   } else {
     if (key == "users") {
       try {
-        return post();
+        return handleSegment(request);
       } catch (e) {
         return shelf.Response.notFound(
             jsonEncode({'error': 'Internal Error. $e'}));
