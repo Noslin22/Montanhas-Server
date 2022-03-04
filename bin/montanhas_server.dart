@@ -200,8 +200,9 @@ Future<shelf.Response> handleSegment(shelf.Request request) async {
       return shelf.Response.notFound(jsonEncode({'error': 'Not found'}));
     } else {
       data['id'] = Uuid().v1();
-      prop.containsKey(segments[2]) ?
-      prop[segments[2]].add(data) : prop[segments[2]] = [data];
+      prop.containsKey(segments[2])
+          ? prop[segments[2]].add(data)
+          : prop[segments[2]] = [data];
       var position = seg.indexWhere((element) => element['id'] == prop["id"]);
 
       prop.forEach((key, value) {
@@ -274,15 +275,16 @@ Future<shelf.Response> handlePut(shelf.Request request) async {
     var data = jsonDecode(content) as Map;
     final key = request.url.pathSegments[0];
 
-    dynamic seg = await db.getAll(key);
+    List seg = await db.getAll(key);
 
-    if (seg == null) {
+    if (seg.isEmpty) {
       return shelf.Response.notFound(jsonEncode({'error': 'Not found'}));
     } else {
       data['id'] = int.tryParse(request.url.pathSegments[1]) ??
           request.url.pathSegments[1];
+      print(seg);
       var position =
-          (seg as List).indexWhere((element) => element['id'] == data["id"]);
+          seg.indexWhere((element) => element['id'] == data["id"]);
 
       data.forEach((key, value) {
         seg[position][key] = value;
@@ -293,6 +295,7 @@ Future<shelf.Response> handlePut(shelf.Request request) async {
           headers: {'content-type': 'application/json'});
     }
   } catch (e) {
+    print(e);
     return shelf.Response.internalServerError(
         body: jsonEncode({'error': 'Internal Error'}));
   }
