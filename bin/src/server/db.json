@@ -5,7 +5,8 @@
             "email": "nilson@gmail.com",
             "password": "22042008",
             "id": "16b7c210-9a77-11ec-860d-b3d948571337",
-            "percent": 0.0
+            "percent": 0.0,
+            "isAdm": true
         }
     ],
     "questions": [
@@ -15,13 +16,13 @@
             "question": "Quem é a diretora do clube Montanhas?",
             "answers": [
                 {
-                    "text": "Lias"
+                    "text": "Poly"
                 },
                 {
-                    "text": "Rute"
+                    "text": "Margô"
                 },
                 {
-                    "text": "Ester"
+                    "text": "Paloma"
                 },
                 {
                     "text": "Raquel",
