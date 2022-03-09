@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:firebase_dart/firebase_dart.dart';
 import 'package:shelf/shelf.dart' as shelf;
 
 import 'package:uuid/uuid.dart';
@@ -16,6 +17,7 @@ late Database db;
 late AuthService auth;
 
 void main(List<String> args) async {
+  FirebaseDart.setup();
   var parser = ArgParser()..addOption('port', abbr: 'p');
   var result = parser.parse(args);
 
@@ -29,7 +31,7 @@ void main(List<String> args) async {
     exitCode = 64;
     return;
   }
-  db = Database("bin/src/server/db.json");
+  db = Database();
   auth = AuthService(key: "ghasjdklgfsdgkljWEDFSD", exp: 3600);
   db.init();
 
@@ -89,9 +91,10 @@ Future<shelf.Response> handleAuth(shelf.Request request) async {
         String.fromCharCodes(base64Decode(token.replaceFirst('Basic ', '')))
             .split(':');
     var users = await db.getAll('users');
-    Map user = users.firstWhere((element) =>
-        element['email'] == credentials[0] &&
-        element['password'] == credentials[1]);
+    Map user = users.firstWhere((element) {
+      return element['email'] == credentials[0] &&
+          element['password'] == credentials[1];
+    });
 
     int index = user.keys.toList().indexOf("password");
 
@@ -282,20 +285,17 @@ Future<shelf.Response> handlePut(shelf.Request request) async {
     } else {
       data['id'] = int.tryParse(request.url.pathSegments[1]) ??
           request.url.pathSegments[1];
-      print(seg);
-      var position =
-          seg.indexWhere((element) => element['id'] == data["id"]);
+      var position = seg.indexWhere((element) => element['id'] == data["id"]);
 
       data.forEach((key, value) {
         seg[position][key] = value;
       });
 
       await db.save(key, seg);
-      return shelf.Response.ok(jsonEncode(data),
+      return shelf.Response.ok(jsonEncode(seg[position]),
           headers: {'content-type': 'application/json'});
     }
   } catch (e) {
-    print(e);
     return shelf.Response.internalServerError(
         body: jsonEncode({'error': 'Internal Error'}));
   }

@@ -1,6 +1,10 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
 import 'dart:io';
 
+import 'package:firebase_dart/firebase_dart.dart';
+
+import '../../configurations.dart';
+
 abstract class IDatabase {
   Future init();
   Future save(String key, dynamic seg);
@@ -10,27 +14,34 @@ abstract class IDatabase {
 }
 
 class Database implements IDatabase {
-  late Map<String, dynamic> _json;
-  final String path;
+  late DatabaseReference ref;
 
-  Database(this.path);
+  Database();
 
   @override
   Future init() async {
-    final db = File(path);
-    if (db.existsSync()) {
-      _json = jsonDecode(await db.readAsString());
-    } else {
-      await db.create(recursive: true);
-      await db.writeAsString('{}');
-      _json = {};
+    late FirebaseApp app;
+
+    try {
+      app = Firebase.app();
+    } catch (e) {
+      app = await Firebase.initializeApp(
+          options: FirebaseOptions.fromMap(Configuration.firebaseConfig));
     }
+
+    final db =
+        FirebaseDatabase(app: app, databaseURL: Configuration.databaseUrl);
+    ref = db.reference();
   }
 
   @override
   Future<List> getAll(String query) async {
-    var db = _json;
-    return db[query] ?? [];
+    final db = ref.child(query);
+    List value = [];
+    await db.once().then((v) {
+      value = (v.value as Map).values.toList();
+    });
+    return value;
   }
 
   @override
@@ -38,7 +49,7 @@ class Database implements IDatabase {
     var db = await getAll(query);
     return db.firstWhere((element) => element['id'].toString() == id);
   }
-  
+
   @override
   Future<dynamic> getProprety(String query, String id, String proprety) async {
     var db = await getAll(query);
@@ -47,10 +58,11 @@ class Database implements IDatabase {
 
   @override
   Future save(String key, dynamic seg) async {
-    _json[key] = seg;
-    await File(path).writeAsString(jsonEncode(_json));
+    final db = ref.child(key);
+    db.set(seg);
+    await db.set(seg);
   }
 
   @override
-  String toString() => _json.toString();
+  String toString() => ref.toString();
 }
