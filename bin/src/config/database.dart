@@ -1,9 +1,12 @@
+import 'dart:collection';
 import 'dart:convert' show jsonEncode, jsonDecode;
 import 'dart:io';
 
 import 'package:firebase_dart/firebase_dart.dart';
 
 import '../../configurations.dart';
+import '../models/question_model.dart';
+import '../models/user_model.dart';
 
 abstract class IDatabase {
   Future init();
@@ -37,9 +40,21 @@ class Database implements IDatabase {
   @override
   Future<List> getAll(String query) async {
     final db = ref.child(query);
-    List value = [];
+    List<Map> value = [];
     await db.once().then((v) {
-      value = (v.value as Map).values.toList();
+      (v.value as Map).values.toList().forEach(
+        (element) {
+          switch (query) {
+            case "users":
+              // print(UserModel.fromMap(element).toJson());
+              value.add(jsonDecode(UserModel.fromMap(element).toJson()));
+              break;
+            case "questions":
+              value.add(jsonDecode(QuestionModel.fromMap(element).toJson()));
+              break;
+          }
+        },
+      );
     });
     return value;
   }
