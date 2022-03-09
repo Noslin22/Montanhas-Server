@@ -8,7 +8,7 @@ class QuestionModel {
   final String subtitle;
   final String question;
   final List<AnswerModel> answers;
-  final List<Map<String, String>> users;
+  final List users;
   QuestionModel({
     this.id,
     required this.title,
@@ -38,7 +38,7 @@ class QuestionModel {
       answers: List<AnswerModel>.from(
         (map['answers'] as Map).values.map((x) => AnswerModel.fromMap(x)),
       ),
-      users: map["users"] ?? [],
+      users: map["users"] == null ? [] : (map["users"] as Map).values.toList(),
     );
   }
 
