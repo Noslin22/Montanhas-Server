@@ -175,18 +175,18 @@ Future<shelf.Response> handleGet(shelf.Request request) async {
 
 Future<shelf.Response> handleSegment(shelf.Request request) async {
   List segments = request.url.pathSegments;
-    List<dynamic>? seg = await db.getAll(segments[0]);
+  List<dynamic>? seg = await db.getAll(segments[0]);
 
   final key = segments[0];
   if (segments.length == 1) {
     var content = await request.readAsString();
     var data = jsonDecode(content) as Map;
 
-      data['id'] = Uuid().v1();
-      seg.add(data);
-      await db.save(key, seg);
-      return shelf.Response.ok(jsonEncode(data),
-          headers: {'content-type': 'application/json'});
+    data['id'] = Uuid().v1();
+    seg.add(data);
+    await db.save(key, seg);
+    return shelf.Response.ok(jsonEncode(data),
+        headers: {'content-type': 'application/json'});
   } else if (segments.length == 3) {
     var content = await request.readAsString();
     var data = jsonDecode(content) as Map;
@@ -244,18 +244,28 @@ Future<shelf.Response> handleDelete(shelf.Request request) async {
     return shelf.Response.forbidden(jsonEncode({'error': 'middlewareJwt'}));
   }
   try {
+    final bool simple = request.url.pathSegments.length == 2;
     final key = request.url.pathSegments[0];
-    dynamic seg = await db.getAll(key);
+    List<dynamic> seg = await db.getAll(key);
 
-    if (seg == null) {
+    if (seg.isEmpty) {
       return shelf.Response.notFound(jsonEncode({'error': 'Not found'}));
     } else {
-      (seg as List).removeWhere(
-        (element) => element['id'] == request.url.pathSegments[1],
-      );
-      await db.save(key, seg);
-      return shelf.Response.ok(jsonEncode({'data': 'ok!'}),
-          headers: {'content-type': 'application/json'});
+      if (simple) {
+        seg.removeWhere(
+          (element) => element['id'] == request.url.pathSegments[1],
+        );
+        await db.save(key, seg);
+        return shelf.Response.ok(jsonEncode({'data': 'ok!'}),
+            headers: {'content-type': 'application/json'});
+      } else {
+        seg = [
+          {" ": " "}
+        ];
+        await db.save(key, seg);
+        return shelf.Response.ok(jsonEncode({'data': 'ok!'}),
+            headers: {'content-type': 'application/json'});
+      }
     }
   } catch (e) {
     return shelf.Response.internalServerError(
