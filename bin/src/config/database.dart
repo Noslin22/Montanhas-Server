@@ -42,7 +42,7 @@ class Database implements IDatabase {
     await db.once().then((v) {
       (v.value as Map).values.toList().forEach(
         (element) {
-          if ((element as Map<String, dynamic>).containsKey("answers")) {
+          if ((element as Map<String, dynamic>).containsKey("id")) {
             switch (query) {
               case "users":
                 value.add(jsonDecode(UserModel.fromMap(element).toJson()));
