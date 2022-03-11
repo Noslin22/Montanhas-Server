@@ -1,6 +1,4 @@
-import 'dart:collection';
-import 'dart:convert' show jsonEncode, jsonDecode;
-import 'dart:io';
+import 'dart:convert' show jsonDecode;
 
 import 'package:firebase_dart/firebase_dart.dart';
 
@@ -44,14 +42,15 @@ class Database implements IDatabase {
     await db.once().then((v) {
       (v.value as Map).values.toList().forEach(
         (element) {
-          switch (query) {
-            case "users":
-              // print(UserModel.fromMap(element).toJson());
-              value.add(jsonDecode(UserModel.fromMap(element).toJson()));
-              break;
-            case "questions":
-              value.add(jsonDecode(QuestionModel.fromMap(element).toJson()));
-              break;
+          if ((element as Map<String, dynamic>).containsKey("answers")) {
+            switch (query) {
+              case "users":
+                value.add(jsonDecode(UserModel.fromMap(element).toJson()));
+                break;
+              case "questions":
+                value.add(jsonDecode(QuestionModel.fromMap(element).toJson()));
+                break;
+            }
           }
         },
       );

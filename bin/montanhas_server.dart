@@ -175,26 +175,21 @@ Future<shelf.Response> handleGet(shelf.Request request) async {
 
 Future<shelf.Response> handleSegment(shelf.Request request) async {
   List segments = request.url.pathSegments;
+    List<dynamic>? seg = await db.getAll(segments[0]);
 
   final key = segments[0];
   if (segments.length == 1) {
     var content = await request.readAsString();
     var data = jsonDecode(content) as Map;
-    List<dynamic> seg = await db.getAll(segments[0]);
 
-    if (seg.isEmpty) {
-      return shelf.Response.notFound(jsonEncode({'error': 'Not found'}));
-    } else {
       data['id'] = Uuid().v1();
       seg.add(data);
       await db.save(key, seg);
       return shelf.Response.ok(jsonEncode(data),
           headers: {'content-type': 'application/json'});
-    }
   } else if (segments.length == 3) {
     var content = await request.readAsString();
     var data = jsonDecode(content) as Map;
-    List<dynamic> seg = await db.getAll(segments[0]);
     Map prop = seg.firstWhere(
       (element) => element["id"].toString() == segments[1],
     ) as Map;
