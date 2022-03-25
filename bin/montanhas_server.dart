@@ -70,6 +70,8 @@ FutureOr<shelf.Response> handleRequest(shelf.Request request) {
           "Access-Control-Allow-Methods":
               "POST, GET, OPTIONS, DELETE, PUT, PATCH",
           'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': '*',
+          'Referrer-Policy': 'no-referrer-when-downgrade'
         },
       );
     } else {
