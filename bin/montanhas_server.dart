@@ -62,6 +62,16 @@ FutureOr<shelf.Response> handleRequest(shelf.Request request) {
       return handlePut(request);
     } else if (method == 'PATCH' && mimeType == 'application/json') {
       return handlePut(request);
+    } else if (method == 'OPTIONS') {
+      return shelf.Response.ok(
+        "{}",
+        headers: {
+          'content-type': 'application/json',
+          "Access-Control-Allow-Methods":
+              "POST, GET, OPTIONS, DELETE, PUT, PATCH",
+          'Access-Control-Allow-Origin': '*',
+        },
+      );
     } else {
       final body = jsonEncode({
         'error': 'Unsupported request: ${request.method}.',
@@ -110,12 +120,7 @@ Future<shelf.Response> handleAuth(shelf.Request request) async {
         'token': auth.generateToken(user['id'].toString()),
         'exp': auth.exp
       }),
-      headers: {
-        'content-type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Referrer-Policy': 'no-referrer-when-downgrade'
-      },
+      headers: {'content-type': 'application/json'},
     );
   } catch (e) {
     return shelf.Response.forbidden(jsonEncode({'error': 'Forbidden Access'}));
