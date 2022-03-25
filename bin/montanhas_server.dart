@@ -110,7 +110,7 @@ Future<shelf.Response> handleAuth(shelf.Request request) async {
         'token': auth.generateToken(user['id'].toString()),
         'exp': auth.exp
       }),
-      headers: {'content-type': 'application/json'},
+      headers: {'content-type': 'application/json', 'Access-Control-Allow-Origin': '*'},
     );
   } catch (e) {
     return shelf.Response.forbidden(jsonEncode({'error': 'Forbidden Access'}));
