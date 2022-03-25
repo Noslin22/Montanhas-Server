@@ -252,12 +252,21 @@ Future<shelf.Response> handleDelete(shelf.Request request) async {
       return shelf.Response.notFound(jsonEncode({'error': 'Not found'}));
     } else {
       if (simple) {
-        seg.removeWhere(
-          (element) => element['id'] == request.url.pathSegments[1],
-        );
-        await db.save(key, seg);
-        return shelf.Response.ok(jsonEncode({'data': 'ok!'}),
-            headers: {'content-type': 'application/json'});
+        if (seg.length > 1) {
+          seg.removeWhere(
+            (element) => element['id'] == request.url.pathSegments[1],
+          );
+          await db.save(key, seg);
+          return shelf.Response.ok(jsonEncode({'data': 'ok!'}),
+              headers: {'content-type': 'application/json'});
+        } else {
+          seg = [
+            {" ": " "}
+          ];
+          await db.save(key, seg);
+          return shelf.Response.ok(jsonEncode({'data': 'ok!'}),
+              headers: {'content-type': 'application/json'});
+        }
       } else {
         seg = [
           {" ": " "}
