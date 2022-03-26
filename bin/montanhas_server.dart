@@ -69,7 +69,7 @@ FutureOr<shelf.Response> handleRequest(shelf.Request request) {
           'content-type': 'application/json',
           "Access-Control-Allow-Methods":
               "POST, GET, OPTIONS, DELETE, PUT, PATCH",
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': 'https://basemontanhas.web.app/',
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
         },
@@ -122,7 +122,10 @@ Future<shelf.Response> handleAuth(shelf.Request request) async {
         'token': auth.generateToken(user['id'].toString()),
         'exp': auth.exp
       }),
-      headers: {'content-type': 'application/json'},
+      headers: {
+        'content-type': 'application/json',
+        "Access-Control-Allow-Origin": "https://basemontanhas.web.app/",
+      },
     );
   } catch (e) {
     return shelf.Response.forbidden(jsonEncode({'error': 'Forbidden Access'}));
@@ -177,8 +180,10 @@ Future<shelf.Response> handleGet(shelf.Request request) async {
     if (seg == null) {
       return shelf.Response.notFound(jsonEncode({'error': 'Not found'}));
     } else {
-      return shelf.Response.ok(jsonEncode(seg),
-          headers: {'content-type': 'application/json'});
+      return shelf.Response.ok(jsonEncode(seg), headers: {
+        'content-type': 'application/json',
+        "Access-Control-Allow-Origin": "https://basemontanhas.web.app/",
+      });
     }
   } catch (e) {
     return shelf.Response.notFound(jsonEncode({'error': 'Internal Error. $e'}));
@@ -219,8 +224,10 @@ Future<shelf.Response> handleSegment(shelf.Request request) async {
         seg[position][key] = value;
       });
       await db.save(key, seg);
-      return shelf.Response.ok(jsonEncode(prop),
-          headers: {'content-type': 'application/json'});
+      return shelf.Response.ok(jsonEncode(prop), headers: {
+        'content-type': 'application/json',
+        "Access-Control-Allow-Origin": "https://basemontanhas.web.app/",
+      });
     }
   } else {
     return shelf.Response.notFound(
@@ -269,23 +276,29 @@ Future<shelf.Response> handleDelete(shelf.Request request) async {
             (element) => element['id'] == request.url.pathSegments[1],
           );
           await db.save(key, seg);
-          return shelf.Response.ok(jsonEncode({'data': 'ok!'}),
-              headers: {'content-type': 'application/json'});
+          return shelf.Response.ok(jsonEncode({'data': 'ok!'}), headers: {
+            'content-type': 'application/json',
+            "Access-Control-Allow-Origin": "https://basemontanhas.web.app/",
+          });
         } else {
           seg = [
             {" ": " "}
           ];
           await db.save(key, seg);
-          return shelf.Response.ok(jsonEncode({'data': 'ok!'}),
-              headers: {'content-type': 'application/json'});
+          return shelf.Response.ok(jsonEncode({'data': 'ok!'}), headers: {
+            'content-type': 'application/json',
+            "Access-Control-Allow-Origin": "https://basemontanhas.web.app/",
+          });
         }
       } else {
         seg = [
           {" ": " "}
         ];
         await db.save(key, seg);
-        return shelf.Response.ok(jsonEncode({'data': 'ok!'}),
-            headers: {'content-type': 'application/json'});
+        return shelf.Response.ok(jsonEncode({'data': 'ok!'}), headers: {
+          'content-type': 'application/json',
+          "Access-Control-Allow-Origin": "https://basemontanhas.web.app/",
+        });
       }
     }
   } catch (e) {
@@ -318,8 +331,10 @@ Future<shelf.Response> handlePut(shelf.Request request) async {
       });
 
       await db.save(key, seg);
-      return shelf.Response.ok(jsonEncode(seg[position]),
-          headers: {'content-type': 'application/json'});
+      return shelf.Response.ok(jsonEncode(seg[position]), headers: {
+        'content-type': 'application/json',
+        "Access-Control-Allow-Origin": "https://basemontanhas.web.app/",
+      });
     }
   } catch (e) {
     return shelf.Response.internalServerError(
