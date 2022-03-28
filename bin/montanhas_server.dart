@@ -12,7 +12,7 @@ import 'src/config/database.dart';
 import 'src/server/auth_service.dart';
 
 // For Google Cloud Run, set _hostname to '0.0.0.0'.
-const _hostname = 'localhost';
+const _hostname = '0.0.0.0';
 late Database db;
 late AuthService auth;
 
@@ -125,8 +125,8 @@ Future<shelf.Response> handleAuth(shelf.Request request) async {
       headers: {
         'content-type': 'application/json',
         "Access-Control-Allow-Origin": "*",
-          'Access-Control-Allow-Headers': '*',
-          'Referrer-Policy': 'no-referrer-when-downgrade'
+        'Access-Control-Allow-Headers': '*',
+        'Referrer-Policy': 'no-referrer-when-downgrade'
       },
     );
   } catch (e) {
@@ -185,8 +185,8 @@ Future<shelf.Response> handleGet(shelf.Request request) async {
       return shelf.Response.ok(jsonEncode(seg), headers: {
         'content-type': 'application/json',
         "Access-Control-Allow-Origin": "*",
-          'Access-Control-Allow-Headers': '*',
-          'Referrer-Policy': 'no-referrer-when-downgrade'
+        'Access-Control-Allow-Headers': '*',
+        'Referrer-Policy': 'no-referrer-when-downgrade'
       });
     }
   } catch (e) {
@@ -209,8 +209,8 @@ Future<shelf.Response> handleSegment(shelf.Request request) async {
     return shelf.Response.ok(jsonEncode(data), headers: {
       'content-type': 'application/json',
       "Access-Control-Allow-Origin": "*",
-          'Access-Control-Allow-Headers': '*',
-          'Referrer-Policy': 'no-referrer-when-downgrade'
+      'Access-Control-Allow-Headers': '*',
+      'Referrer-Policy': 'no-referrer-when-downgrade'
     });
   } else if (segments.length == 3) {
     var content = await request.readAsString();
@@ -235,8 +235,8 @@ Future<shelf.Response> handleSegment(shelf.Request request) async {
       return shelf.Response.ok(jsonEncode(prop), headers: {
         'content-type': 'application/json',
         "Access-Control-Allow-Origin": "*",
-          'Access-Control-Allow-Headers': '*',
-          'Referrer-Policy': 'no-referrer-when-downgrade'
+        'Access-Control-Allow-Headers': '*',
+        'Referrer-Policy': 'no-referrer-when-downgrade'
       });
     }
   } else {
@@ -289,8 +289,8 @@ Future<shelf.Response> handleDelete(shelf.Request request) async {
           return shelf.Response.ok(jsonEncode({'data': 'ok!'}), headers: {
             'content-type': 'application/json',
             "Access-Control-Allow-Origin": "*",
-          'Access-Control-Allow-Headers': '*',
-          'Referrer-Policy': 'no-referrer-when-downgrade'
+            'Access-Control-Allow-Headers': '*',
+            'Referrer-Policy': 'no-referrer-when-downgrade'
           });
         } else {
           seg = [
@@ -300,8 +300,8 @@ Future<shelf.Response> handleDelete(shelf.Request request) async {
           return shelf.Response.ok(jsonEncode({'data': 'ok!'}), headers: {
             'content-type': 'application/json',
             "Access-Control-Allow-Origin": "*",
-          'Access-Control-Allow-Headers': '*',
-          'Referrer-Policy': 'no-referrer-when-downgrade'
+            'Access-Control-Allow-Headers': '*',
+            'Referrer-Policy': 'no-referrer-when-downgrade'
           });
         }
       } else {
@@ -350,8 +350,8 @@ Future<shelf.Response> handlePut(shelf.Request request) async {
       return shelf.Response.ok(jsonEncode(seg[position]), headers: {
         'content-type': 'application/json',
         "Access-Control-Allow-Origin": "*",
-          'Access-Control-Allow-Headers': '*',
-          'Referrer-Policy': 'no-referrer-when-downgrade'
+        'Access-Control-Allow-Headers': '*',
+        'Referrer-Policy': 'no-referrer-when-downgrade'
       });
     }
   } catch (e) {
