@@ -69,7 +69,7 @@ FutureOr<shelf.Response> handleRequest(shelf.Request request) {
           'content-type': 'application/json',
           "Access-Control-Allow-Methods":
               "POST, GET, OPTIONS, DELETE, PUT, PATCH",
-          'Access-Control-Allow-Origin': 'https://db-montanhas.herokuapp.com/',
+          'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
         },
@@ -124,7 +124,7 @@ Future<shelf.Response> handleAuth(shelf.Request request) async {
       }),
       headers: {
         'content-type': 'application/json',
-        "Access-Control-Allow-Origin": "https://db-montanhas.herokuapp.com/",
+        "Access-Control-Allow-Origin": "*",
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
       },
@@ -184,7 +184,7 @@ Future<shelf.Response> handleGet(shelf.Request request) async {
     } else {
       return shelf.Response.ok(jsonEncode(seg), headers: {
         'content-type': 'application/json',
-        "Access-Control-Allow-Origin": "https://db-montanhas.herokuapp.com/",
+        "Access-Control-Allow-Origin": "*",
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
       });
@@ -208,7 +208,7 @@ Future<shelf.Response> handleSegment(shelf.Request request) async {
     await db.save(key, seg);
     return shelf.Response.ok(jsonEncode(data), headers: {
       'content-type': 'application/json',
-      "Access-Control-Allow-Origin": "https://db-montanhas.herokuapp.com/",
+      "Access-Control-Allow-Origin": "*",
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
     });
@@ -234,7 +234,7 @@ Future<shelf.Response> handleSegment(shelf.Request request) async {
       await db.save(key, seg);
       return shelf.Response.ok(jsonEncode(prop), headers: {
         'content-type': 'application/json',
-        "Access-Control-Allow-Origin": "https://db-montanhas.herokuapp.com/",
+        "Access-Control-Allow-Origin": "*",
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
       });
@@ -288,7 +288,7 @@ Future<shelf.Response> handleDelete(shelf.Request request) async {
           await db.save(key, seg);
           return shelf.Response.ok(jsonEncode({'data': 'ok!'}), headers: {
             'content-type': 'application/json',
-            "Access-Control-Allow-Origin": "https://db-montanhas.herokuapp.com/",
+            "Access-Control-Allow-Origin": "*",
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
           });
@@ -299,7 +299,7 @@ Future<shelf.Response> handleDelete(shelf.Request request) async {
           await db.save(key, seg);
           return shelf.Response.ok(jsonEncode({'data': 'ok!'}), headers: {
             'content-type': 'application/json',
-            "Access-Control-Allow-Origin": "https://db-montanhas.herokuapp.com/",
+            "Access-Control-Allow-Origin": "*",
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
           });
@@ -311,7 +311,7 @@ Future<shelf.Response> handleDelete(shelf.Request request) async {
         await db.save(key, seg);
         return shelf.Response.ok(jsonEncode({'data': 'ok!'}), headers: {
           'content-type': 'application/json',
-          "Access-Control-Allow-Origin": "https://db-montanhas.herokuapp.com/",
+          "Access-Control-Allow-Origin": "*",
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
         });
@@ -349,7 +349,7 @@ Future<shelf.Response> handlePut(shelf.Request request) async {
       await db.save(key, seg);
       return shelf.Response.ok(jsonEncode(seg[position]), headers: {
         'content-type': 'application/json',
-        "Access-Control-Allow-Origin": "https://db-montanhas.herokuapp.com/",
+        "Access-Control-Allow-Origin": "*",
           'Access-Control-Allow-Headers': '*',
           'Referrer-Policy': 'no-referrer-when-downgrade'
       });
